@@ -17,7 +17,29 @@ module Student
       @certificates = Certificate.none
 
       if SeasonToggles.display_scores?
-        @certificates = current_account.certificates.current
+        # todo: check if the certificate exists
+        #   if it does not exist, then do the following:
+        #   determine the certificate type - do students only get 1 type of certificate? (I think yes)
+        #   generate that type of certificate
+        #   else:
+        #   get the current certificate and return that
+
+
+
+        if current_account.certificates.current.empty?
+          puts '*********************** '
+          puts '*********************** no certificate#!!!!!!!'
+          puts '*********************** '
+
+          certificate_recipient = CertificateRecipient.new('participation', current_account, team: current_team)
+          @certificates = CertificateJob.perform_now(certificate_recipient.state)
+        else
+          puts '*********************** '
+          puts '*********************** there is a certificate! yay'
+          puts '*********************** '
+
+          @certificates = current_account.certificates.current
+        end
       end
 
       render template: 'student/scores/index'
